@@ -1,4 +1,4 @@
-#https://git.io/JuCuu
+#wget -O - https://git.io/JuCuu | bash
 
 sudo useradd usr2 -s /bin/bash -d /home/usr
 sudo useradd usr3 -s /bin/bash -d /home/usr
@@ -29,9 +29,9 @@ grep AllowUsers /etc/ssh/sshd_config && grep usr1 /etc/ssh/sshd_config || sed -i
 grep AllowUsers /etc/ssh/sshd_config || echo AllowUsers usr1 >> /etc/ssh/sshd_config
 sudo chmod 644 /etc/ssh/sshd_config
 sudo /etc/init.d/ssh restart
-echo escriba la clave para usr2
-sudo passwd usr2
-echo escriba la clave para usr3
-sudo passwd usr3
-echo escriba la clave para usr4
-sudo passwd usr4
+#echo escriba la clave para usr2
+#sudo passwd usr2
+#echo escriba la clave para usr3
+#sudo passwd usr3
+#echo escriba la clave para usr4
+#sudo passwd usr4
