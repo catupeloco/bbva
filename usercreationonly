@@ -1,0 +1,67 @@
+clear
+echo -----------Limpiando los usuarios, grupo y carpeta
+echo   Aqui eliminamos usr1 usr2 usr3 usr4 luego el grupo
+echo   "comun" y por ultimo la carpeta de su home
+userdel usr1 2>/dev/null
+userdel usr2 2>/dev/null
+userdel usr3 2>/dev/null
+userdel usr4 2>/dev/null
+groupdel comun 2>/dev/null
+rm -fr /home/comun /home/usr1 /home/usr4 2>/dev/null
+
+echo -----------Creando la carpeta comun con los permisos heredables
+echo -Creado grupo comun
+groupadd comun 
+echo -Creando carpeta comun
+mkdir /home/comun
+echo -Asignado grupo comun a carpeta comun
+chgrp comun -R /home/comun
+echo -Asignando permisos a carpeta para el owner y grupo
+chmod 770 /home/comun
+echo -Habilitando herencia de permisos de grupos
+chmod g+s -R /home/comun 
+echo ----------Creando los usuarios con la ruta comun y grupo primario
+useradd usr1 -d /home/usr1 -G sudo -s /bin/bash -m
+useradd usr2 -d /home/comun -G comun -s /bin/bash 
+useradd usr3 -d /home/comun -G comun -s /bin/bash
+useradd usr4 -d /home/usr4 -G sudo -s /bin/bash -m
+echo -Mostrando contenido y permisos
+ls -la /home | grep -E "usr|comun"
+ls -la /home/comun/
+echo ----------Mostrando usuarios y grupo
+echo -Usuarios
+grep ^usr /etc/passwd
+echo -Grupos
+grep -E "usr|comun" /etc/group
+echo -Todo
+id usr1
+id usr2
+id usr3
+id usr4
+
+echo -----------Haciendo pruebas cruzadas de permisos
+echo -Limpiando la carpeta preventivamente
+rm /home/comun/* 2>/dev/null
+echo -Creando el archivo propietario usr2
+su - usr2  -c "echo creacion archivo usr2 por usr2 > usr2.txt" 
+su - usr3  -c "echo agregado linea a archivo usr2 por usr3 >> usr2.txt"
+echo -Creando el archivo propietario usr3
+su - usr3  -c "echo creacion archivo usr3 por usr3 > usr3.txt" 
+su - usr2  -c "echo agregado linea a archivo usr3 por usr2 >> usr3.txt"
+echo ----------Leyendo archivos
+echo -Mostrando permisos
+ls -la /home/comun/ | grep usr
+echo -Mostrando archivo usr2.txt
+cat /home/comun/usr2.txt
+echo -Mostrando archivo usr3.txt
+cat /home/comun/usr3.txt
+
+echo ----------Asignacion de contraseñas
+echo -usr1
+passwd usr1
+echo -usr2
+passwd usr2
+echo -usr3
+passwd usr3
+echo -usr4
+passwd usr4
